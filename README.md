@@ -1,0 +1,2 @@
+# MiniPHP API framework
+這是一個練習開發的API Framework，之前要開發一個PHP的RestfulAPI都會選擇使用Laravel，但由於Laravelㄊㄞ太過於龐大，並不是每個專案都適用，所以自己嘗試開發一個比較簡易使用的PHP API Framework.

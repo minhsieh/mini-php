@@ -1,0 +1,29 @@
+{
+	"name": "minhsieh/mini-php",
+	"description": "This is a mini PHP Restful framework",
+	"keywords": ["http", "PHP", "framework", "Restful", "api"],
+	"homepage": "http://imin.tw",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Min Hsieh",
+			"homepage": "http://imin.tw",
+			"role": "Developer"
+		}	
+	],
+	"supports": {
+		"email": "oimintw@gmail.com",
+		"github": "https://github.com/minhsieh"
+	},
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"required-dev": {
+		"phpunit/phpunit": "~4.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"MiniPHP": "src/"
+		}
+	}
+}
