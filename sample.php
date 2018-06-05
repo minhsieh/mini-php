@@ -14,7 +14,6 @@ const APP_NAME = ''; //add front controller to URL (change only if you know what
  * Contact: juliomatcom@yandex.com
  * @author Julio Cesar Martin
  * @version 0.2.1
-
  */
 abstract class CoreFramework{
     //Main request Object
