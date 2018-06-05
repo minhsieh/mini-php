@@ -102,12 +102,12 @@ class App extends AbstractFramework
 		return $this->request;
 	}
 	
-	public function Redirect($url)
+	public function redirect($url)
 	{
 		echo header('Location: '.$url);
 	}
 	
-	public function Response($filename = '', array $vars = array(), $status = 200, array $headers = array(),$asText = 0)
+	public function response($filename = '', array $vars = array(), $status = 200, array $headers = array(),$asText = 0)
 	{
 		$this->setStatusCode($status);
 
@@ -122,12 +122,12 @@ class App extends AbstractFramework
 		else echo $filename;
 	}
 
-	public function ResponseHTML($html = '', $status = 200, array $headers = array())
+	public function html($html = '', $status = 200, array $headers = array())
 	{
 		return $this->Response($html, array(), $status, $headers, true);
 	}
 
-	public function JsonResponse($data = null, $status = 200, array $headers = array() )
+	public function json($data = null, $status = 200, array $headers = array() )
 	{
 		header('Content-Type: application/json');
 		if (count($headers) > 0 ){
