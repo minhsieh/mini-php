@@ -21,24 +21,24 @@ class App extends AbstractFramework
 		parent::__construct();
 
 		define('APP_DIR', $this->getRootDir() .'/../'); //if your project is in src/ like in documentation, if not correct this
-        define('VIEW_DIR', APP_DIR .'views/');
-        define('CONTROLLER_DIR', APP_DIR .'controllers/');
-        define('VIEWS_ROUTE', APP_DIR .'views/');//deprecated since 0.4
-        define('CONTROLLERS_ROUTE', APP_DIR .'controllers/');//deprecated since 0.4
+		define('VIEW_DIR', APP_DIR .'views/');
+		define('CONTROLLER_DIR', APP_DIR .'controllers/');
+		define('VIEWS_ROUTE', APP_DIR .'views/');//deprecated since 0.4
+		define('CONTROLLERS_ROUTE', APP_DIR .'controllers/');//deprecated since 0.4
 
-        $this->setEnvironment($prod);
+		$this->setEnvironment($prod);
 	}
 
 	public function getRootDir()
-    {
-        return __DIR__;
-    }
+	{
+		return __DIR__;
+	}
 
 	public function  setEnvironment($prod = false){
-        $this->prod = $prod ? ENV_PROD : ENV_DEV;
-    }
+		$this->prod = $prod ? ENV_PROD : ENV_DEV;
+	}
 	
-	public function get($uri, callable $callbacak)
+	public function get($uri, callable $callback)
 	{
 		$this->routes['GET'][] = new Route($uri , $callback);
 	}
@@ -69,11 +69,11 @@ class App extends AbstractFramework
 		$run = $this->traverseRoutes($this->request->getMethod(), $this->routes, $slugs);
 		
 		if(!$run && (!isset($this->routes['respond']) || empty($this->routes['respond']))){
-			return $this->error("Route path not found: {$this->request->getRequestUri()} with method: {$this->request->getMethod()}" , true);
+			return $this->error("Route path not found: {$this->request->getRequestedUri()} with method: {$this->request->getMethod()}" , true);
 		}
 		else if(!$run){
 			$callback = $this->routes['respond']->function();
-            $callback();
+			$callback();
 		}
 		return true;
 	}
@@ -83,17 +83,19 @@ class App extends AbstractFramework
 		return $this->routes;
 	}
 
-	public function generateRoute($uri){
-        return (APP_NAME != '') ?('/'.APP_NAME.$uri) : $uri;
-    }
+	public function generateRoute($uri)
+	{
+		return (APP_NAME != '') ?('/'.APP_NAME.$uri) : $uri;
+	}
 
-	public function getRoute($uri){//deprecated since 0.5
-        return $this->generateRoute($uri);
-    }
+	public function getRoute($uri)
+	{
+		return $this->generateRoute($uri);
+	}
 
 	public function getEnvironment(){
-        return $this->prod ? ENV_PROD : ENV_DEV;
-    }
+		return $this->prod ? ENV_PROD : ENV_DEV;
+	}
 	
 	public function getRequest()
 	{
@@ -105,85 +107,89 @@ class App extends AbstractFramework
 		echo header('Location: '.$url);
 	}
 	
-	public function Response($filename = '', array $vars = array(), $status = 200, array $headers = array(),$asText = 0){
-        $this->setStatusCode($status);
+	public function Response($filename = '', array $vars = array(), $status = 200, array $headers = array(),$asText = 0)
+	{
+		$this->setStatusCode($status);
 
-        if (count($headers)){//add extra headers
-            $this->addCustomHeaders($headers);
-        }
-        //pass to the view
-        if (!$asText){
-            $view = new View(VIEWS_ROUTE.$filename, $vars, $this);
-            $view->load();
-        }
-        else echo $filename;
-    }
+		if (count($headers)){
+			$this->addCustomHeaders($headers);
+		}
+		
+		if (!$asText){
+			$view = new View(VIEWS_ROUTE.$filename, $vars, $this);
+			$view->load();
+		}
+		else echo $filename;
+	}
 
-	public function ResponseHTML($html = '', $status = 200, array $headers = array()){
-        return $this->Response($html, array(), $status, $headers, true);
-    }
+	public function ResponseHTML($html = '', $status = 200, array $headers = array())
+	{
+		return $this->Response($html, array(), $status, $headers, true);
+	}
 
-	public function JsonResponse($data = null, $status = 200, array $headers = array() ){
-        //$this->setStatusCode($status);
-
-        header('Content-Type: application/json');//set content type to Json
-        if (count($headers) > 0 ){//add extra headers
-            $this->addCustomHeaders($headers);
-        }
-
-        echo json_encode($data);
-    }
+	public function JsonResponse($data = null, $status = 200, array $headers = array() )
+	{
+		header('Content-Type: application/json');
+		if (count($headers) > 0 ){
+			$this->addCustomHeaders($headers);
+		}
+		echo json_encode($data);
+	}
 
 	private function addCustomHeaders(array $headers = array()){
-        foreach($headers as $key=>$header){
-            header($key.': '.$header);
-        }
-    }
+		foreach($headers as $key=>$header){
+			header($key.': '.$header);
+		}
+	}
 
-	public function error($msg = '', $number = 0){
-        $status = 500;
-        switch ($number){
-            case 1://not found
-                $status = $this->setStatusCode(404);
-                break;
-            default://internal server error code
-                $this->setStatusCode(500);
-                break;
-        }
+	public function error($msg = '', $number = 0, $exception = false)
+	{
+		$status = 500;
+		switch ($number){
+			case 1:
+				$status = $this->setStatusCode(404);
+				break;
+			default:
+				$this->setStatusCode(500);
+				break;
+		}
 
-        if ($this->getEnvironment() == ENV_PROD){
-            echo "<div style=\"padding-top: 10px; padding-left: 10px;\">
-                      <h2>:( </h2>
-                      <h3>Huston, We have a problem with this request.</h3>
-                      <p>There is status code: <strong>$status</strong></p>
-                      <p>Please try later or contact us.</p>
-                 </div> ";
-        }
-        else if ($this->getEnvironment() == ENV_DEV){//debug enable
-            echo" <div style=\"padding-top: 10px; padding-left: 10px;\">
-                      <h2>Error</h2>
-					  <h4>: (</h4>
-                      <p>The server return <strong>$status</strong> status code.</p>
-                      <p>$msg</p>";
+		if ($this->getEnvironment() == ENV_PROD){
+			echo "<div style=\"padding-top: 10px; padding-left: 10px;\">
+						<h2>:( </h2>
+						<h3>Huston, We have a problem with this request.</h3>
+						<p>There is status code: <strong>$status</strong></p>
+						<p>Please try later or contact us.</p>
+					</div> ";
+		}
+		else if ($this->getEnvironment() == ENV_DEV){
+			echo" <div style=\"padding-top: 10px; padding-left: 10px;\">
+						<h2>Error</h2>
+						<h4>: (</h4>
+						<p>The server return <strong>$status</strong> status code.</p>
+						<p>$msg</p>";
 
-            switch($number){
-                case 1:
-                    echo "
-                    <p> <b>Note</b>: Routes begin always with '/' character.</p>";
-                    break;
-                default:
-                    $this->setStatusCode(500);
-                    break;
-            }
+			switch($number){
+				case 1:
+					echo "
+					<p> <b>Note</b>: Routes begin always with '/' character.</p>";
+					break;
+				default:
+					$this->setStatusCode(500);
+					break;
+			}
 
-            echo "  <h4>Exception:</h4>";
-            throw new \Exception($msg);
-            echo "</div>";
-        }
-        else{
-            // Here your custom environments
-        }
-        return false;
-    }
-	
+			if($exception){
+				echo "  <h4>Exception:</h4>";
+				throw new \Exception($msg);
+				echo "</div>";
+			}
+
+			
+		}
+		else{
+			// Here your custom environments
+		}
+		return false;
+	}
 }
