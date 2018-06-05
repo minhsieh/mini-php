@@ -14,7 +14,7 @@ class App
 		parent::__construct();
 	}
 	
-	public function get($uri, callable $callback)
+	public function get($uri, callable $callbacak)
 	{
 		$this->routes['GET'][] = new Route($uri , $callback);
 	}
@@ -48,7 +48,7 @@ class App
 			return $this->error("Route path not found: {$this->request->getRequestUri()} with method: {$this->request->getMethod()}" , true);
 		}
 		else if(!$run){
-			$callback = $this->routes['respond']->function;
+			$callback = $this->routes['respond']->function();
             $callback();
 		}
 		return true;
