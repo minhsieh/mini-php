@@ -15,23 +15,37 @@ class App extends AbstractFramework
 	protected $db;
 	protected $request;
 	protected $routes = array();
+	protected $app_path, $view_path, $controller_path;
 	
 	public function __construct($prod = false)
 	{
 		parent::__construct();
 
-		define('APP_DIR', $this->getRootDir() .'/../'); //if your project is in src/ like in documentation, if not correct this
-		define('VIEW_DIR', APP_DIR .'views/');
-		define('CONTROLLER_DIR', APP_DIR .'controllers/');
-		define('VIEWS_ROUTE', APP_DIR .'views/');//deprecated since 0.4
-		define('CONTROLLERS_ROUTE', APP_DIR .'controllers/');//deprecated since 0.4
+		$this->app_path = $this->getRootDir();
+		$this->view_path = $this->app_path."/views/";
+		$this->controller_path = $this->app_path."/controllers/";
 
 		$this->setEnvironment($prod);
 	}
 
+	public function setAppPath($path)
+	{
+		$this->app_path = $path;
+	}
+
+	public function setViewPath($path)
+	{
+		$this->view_path = $path;
+	}
+
+	public function setControllerPath($path)
+	{
+		$this->controller_path = $path;
+	}
+
 	public function getRootDir()
 	{
-		return __DIR__;
+		return dirname(dirname(__DIR__));
 	}
 
 	public function  setEnvironment($prod = false){
@@ -116,7 +130,7 @@ class App extends AbstractFramework
 		}
 		
 		if (!$asText){
-			$view = new View(VIEWS_ROUTE.$filename, $vars, $this);
+			$view = new View($this->view_path.$filename, $vars, $this);
 			$view->load();
 		}
 		else echo $filename;
