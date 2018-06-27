@@ -34,7 +34,7 @@ class View
 		else{
 			if($this->framework ){
 				if($app->getEnvironment() == ENV_DEV)
-					return $app->error("View filename '{$this->src}' NOT found in '". VIEWS_ROUTE."'.<br/>
+					return $app->error("View filename '{$this->src}' NOT found in '". $this->framework->view_path."'.<br/>
 					 Maybe you need to change the App::APP_DIR or App::VIEW_DIR Constant to your current folder structure.",2);
 				else
 					return $app->error('',2);

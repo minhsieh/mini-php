@@ -15,7 +15,7 @@ class App extends AbstractFramework
 	protected $db;
 	protected $request;
 	protected $routes = array();
-	protected $app_path, $view_path, $controller_path;
+	public $app_path, $view_path, $controller_path;
 	
 	public function __construct($prod = false)
 	{
